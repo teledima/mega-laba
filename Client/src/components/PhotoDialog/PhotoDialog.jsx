@@ -16,7 +16,7 @@ import { useState } from 'react';
 
 
 const PhotoDialog = (props) => {    
-    const { isDialogOpen, setDialogOpen, setPhotoInfo} = props
+    const { isDialogOpen, setDialogOpen, setPhotoInfo, photoId} = props
     const { register, handleSubmit, formState: { errors } } = useForm()
     const [photo, setPhoto] = useState()
 
@@ -31,7 +31,7 @@ const PhotoDialog = (props) => {
 
     const getPhoto = async() => {
         try {
-            const response = await instance.get('/image')
+            const response = await instance.get(`/image${photoId}`)
         } catch (error) {
             console.log(error)
         }
@@ -40,6 +40,7 @@ const PhotoDialog = (props) => {
     const onSubmitHandler = (data) => {
         // data.id = id
         setPhotoInfo(data)
+        // console.log(data)
         // getBiteSize()
     }
 

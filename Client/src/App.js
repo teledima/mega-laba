@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import Button from '@material-ui/core/Button'
+import Paper from '@material-ui/core/Paper';
 
 // *** OTHER ***
 import instance from './instance'
@@ -11,7 +12,8 @@ const App = () => {
     const { register, handleSubmit } = useForm()
     const [photoList, setPhotoList] = useState()
     const [isPaused, setIsPaused] = useState(false);
-    const [isDialogOpen, setDialogOpen] = useState(true)
+    const [isDialogOpen, setDialogOpen] = useState(false)
+    const [photoId, setPhotoId] = useState()
     const [status, setStatus] = useState("");
     const [photoInfo, setPhotoInfo] = useState()
     const ws = useRef(null);
@@ -26,7 +28,7 @@ const App = () => {
                 formData.append('images', imageList[i])                
             }
 
-            await instance.post('/images', formData,{
+            await instance.post('/images', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -37,21 +39,12 @@ const App = () => {
         }
     }
 
-    // const getPhotoList = async() => {
-    //     try {
-    //         const response = await instance.get('images/')
-    //         setPhotoList(response.data)
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
-
     const webSocket = useCallback(() => {
         if (!isPaused) {
-            ws.current = new WebSocket("wss://ws.kraken.com/"); // создаем ws соединение
+            ws.current = new WebSocket("ws://localhost:4000"); // создаем ws соединение
             ws.current.onopen = () => setStatus("Соединение открыто");	// callback на ивент открытия соединения
             ws.current.onclose = () => setStatus("Соединение закрыто"); // callback на ивент закрытия соединения
-
+			
             gettingData();
         }
         return () => ws.current.close(); // кода меняется isPaused - соединение закрывается
@@ -61,14 +54,22 @@ const App = () => {
         if (!ws.current) return;
 
         ws.current.onmessage = e => {                //подписка на получение данных по вебсокету
-            if (isPaused) return;
+            console.log(e.data)
+
+			if (isPaused) return;
             const message = JSON.parse(e.data);
             setPhotoList(message);
         };
     }, [isPaused]);
 
     const sendPhotoInfo = async() => {
-        ws.current.send(JSON.stringify(photoInfo))
+		if (photoInfo)
+			ws.current.onopen = () => ws.current.send(JSON.stringify(photoInfo));	// callback на ивент открытия соединения
+    }
+
+    const handeClickPhoto = (e) => {
+        setDialogOpen(true)
+        setPhotoId(e.target.id)
     }
 
     useEffect(()=>{
@@ -100,21 +101,22 @@ const App = () => {
             </form>
             <div className='photoList'>
                 <h2>{status}</h2>
-                <p>{`connection ID: ${photoList?.connectionID}`}</p>
-                <p>{`event: ${photoList?.event}`}</p>
-                <p>{`status: ${photoList?.status}`}</p>
-                <p>{`version: ${photoList?.version}`}</p>
-                {/* {photoList?.map((item)=>{
-                    <div>
-                        <h2>{item.name}</h2>
-                    </div>
-                })}*/}
+                {
+					photoList?.map((item)=>{
+						return (
+                            <Paper id={`${item.name}`} elevation={3} onClick={e=>handeClickPhoto(e)}> 
+								<h2>{item.name}</h2>
+                            </Paper>
+						)
+					})
+				}
             </div> 
 
             <PhotoDialog
                 isDialogOpen={isDialogOpen}
                 setDialogOpen={setDialogOpen}
                 setPhotoInfo={setPhotoInfo}
+                photoId={photoId}
             />
         </div>
     )
