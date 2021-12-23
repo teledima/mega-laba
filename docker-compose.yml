@@ -4,8 +4,8 @@ services:
     restart: always
     image: minio/minio
     ports:
-      - "9000:9000"
-      - "34333:34333"
+      - 9000:9000
+      - 34333:34333
     environment:
       MINIO_ROOT_USER: minio
       MINIO_ROOT_PASSWORD: minio124
@@ -13,6 +13,7 @@ services:
     volumes:
       - ./docker/data:/export
       - ./docker/config:/root/.minio
+
   rabbitmq:
     image: rabbitmq:3.9-management
     environment:
@@ -23,12 +24,42 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-  grpc:
+
+  waitforrabbit:
+    image: dadarek/wait-for-dependencies
+    depends_on:
+      - rabbitmq 
+    command: rabbitmq:5672
+
+  hashimage:
     build: ./grpc_server
     ports: 
-      - "5001:5001"
+      - 5001:5001
+
   consumer:
     depends_on:
-      - rabbitmq
+      - waitforrabbit
       - minio
     build: ./img-consumer
+    environment: 
+      RABBIT_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672
+      RABBIT_QUEUE: test3
+      HASHIMAGE_ADDR: hashimage:5001
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ACCESSKEY: minio
+      MINIO_SECRETKEY: minio124
+
+  client:
+    build: ./client2
+    ports:
+      - 3000:3000
+
+  httpserver:
+    build: ./http-server
+    ports:
+      - 8000:8000
+    environment: 
+      PORT: 8000
+      RABBIT_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672
+      QUEUE: test3
