@@ -4,18 +4,8 @@ const uuid = require('uuid');
 
 const REPLY_QUEUE = 'amq.rabbitmq.reply-to';
 
-const createConnection = (rabbitmqconn) => new Promise((resolve, reject) => {
-    amqplib.connect(rabbitmqconn, function(err, conn) {
-        if (err) {
-          console.error("[AMQP]", err.message);
-          return setTimeout(() => createConnection(rabbitmqconn), 1000);
-        }
-        resolve(conn)
-    })
-})
-
 const createClient = async (rabbitmqconn) => {
-    const connection = await createConnection(rabbitmqconn)
+    const connection = await amqplib.connect(rabbitmqconn)
     const channel = await connection.createChannel()
     channel.responseEmitter = new EventEmitter()
     channel.responseEmitter.setMaxListeners(0)
