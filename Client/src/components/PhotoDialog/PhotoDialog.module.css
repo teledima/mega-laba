@@ -1,0 +1,31 @@
+.img {
+    height: 300px;
+    width: 500px;
+    max-width: 500px;
+    margin:auto
+}
+
+.dialog {
+    display: flex;
+    flex-direction: column;
+    /* width: 100%; */
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+.input{
+    width: 40%;
+    height: 60px;
+    
+}

@@ -1,0 +1,164 @@
+### GrpcHash
+/GrpcHash/__pycache__
+/GrpcHash/.idea
+
+### VisualStudio ###
+
+# Tool Runtime Dir
+/[Tt]ools/
+/WcfService/.dotnet/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+/WcfService/WcfService/artifacts/
+/WcfService/WcfService/.idea/
+/WcfService/WcfService/[Dd]ebug/
+/WcfService/WcfService/[Dd]ebugPublic/
+/WcfService/WcfService/[Rr]elease/
+/WcfService/WcfService/[Rr]eleases/
+/WcfService/WcfService/x64/
+/WcfService/WcfService/x86/
+/WcfService/WcfService/build/
+/WcfService/WcfService/bld/
+/WcfService/WcfService/[Bb]in/
+/WcfService/WcfService/[Oo]bj/
+/WcfService/WcfService/msbuild.binlog
+/WcfService/WcfService/msbuild.log
+/WcfService/WcfService/msbuild.err
+/WcfService/WcfService/msbuild.wrn
+
+# Cross building rootfs
+/WcfService/cross/rootfs/
+/WcfService/cross/android-rootfs/
+# add x86 as it is ignored in 'Build results'
+!cross/x86
+
+# Visual Studio 2015
+/WcfService/.vs/
+
+# Visual Studio 2015 Pre-CTP6
+*.sln.ide
+*.ide/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+#NUNIT
+*.VisualState.xml
+TestResult.xml
+
+# Build Results of an ATL Project
+[Dd]ebugPS/
+[Rr]eleasePS/
+dlldata.c
+
+# Chutzpah Test files
+_Chutzpah*
+
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+
+# TFS 2012 Local Workspace
+$tf/
+
+# Guidance Automation Toolkit
+*.gpState
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# JustCode is a .NET coding addin-in
+.JustCode
+
+# TeamCity is a build add-in
+_TeamCity*
+
+# DotCover is a Code Coverage Tool
+*.dotCover
+
+# NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+
+# MightyMoose
+*.mm.*
+AutoTest.Net/
+
+# Web workbench (sass)
+.sass-cache/
+
+# Installshield output folder
+[Ee]xpress/
+
+# DocProject is a documentation generator add-in
+DocProject/buildhelp/
+DocProject/Help/*.HxT
+DocProject/Help/*.HxC
+DocProject/Help/*.hhc
+DocProject/Help/*.hhk
+DocProject/Help/*.hhp
+DocProject/Help/Html2
+DocProject/Help/html
+
+# Click-Once directory
+publish/
+
+# Publish Web Output
+*.[Pp]ublish.xml
+*.azurePubxml
+*.pubxml
+*.publishproj
+
+# NuGet Packages
+*.nuget.props
+*.nuget.targets
+*.nupkg
+**/packages/*
+.packages/
+
+# NuGet package restore lockfiles
+project.lock.json
+
+# Windows Azure Build Output
+csx/
+*.build.csdef
+
+# Windows Store app package directory
+AppPackages/
+
+# Others
+*.Cache
+ClientBin/
+[Ss]tyle[Cc]op.*
+~$*
+*.dbmdl
+*.dbproj.schemaview
+*.pfx
+*.publishsettings
+node_modules/
+*.metaproj
+*.metaproj.tmp
+bin.localpkg/
+
+# RIA/Silverlight projects
+Generated_Code/
