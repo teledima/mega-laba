@@ -1,0 +1,34 @@
+version: "2"
+services:
+  minio:
+    restart: always
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "34333:34333"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio124
+    command: server --address ":9000" --console-address ":34333" /export
+    volumes:
+      - ./docker/data:/export
+      - ./docker/config:/root/.minio
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - 5672:5672
+      - 15672:15672
+  grpc:
+    build: ./grpc_server
+    ports: 
+      - "5001:5001"
+  consumer:
+    depends_on:
+      - rabbitmq
+      - minio
+    build: ./img-consumer
