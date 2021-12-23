@@ -8,12 +8,12 @@ import HashImageServices from './services/hashImage.service'
 const grpc = require("@grpc/grpc-js")
 
 ;(async () => {
-    const hashImage = new HashImageServices("localhost:5001", grpc.credentials.createInsecure())
-    const connection = await amqplib.connect('amqp://guest:guest@localhost:5672')
+    const hashImage = new HashImageServices(process.env.HASHIMAGE_ADDR, grpc.credentials.createInsecure())
+    const connection = await amqplib.connect(process.env.RABBIT_URL)
     console.log(`[ ${new Date()} ] Server started`)
     const channel = await connection.createChannel()
-    await channel.assertQueue('test3')
-    await channel.consume('test3', async (msg) => {
+    await channel.assertQueue(process.env.RABBIT_QUEUE)
+    await channel.consume(process.env.RABBIT_QUEUE, async (msg) => {
         if (msg !== null) {
             const message = deserialize(msg.content)
             console.log(`[ ${new Date()} ] Message get: ${message}`)
@@ -44,8 +44,8 @@ const grpc = require("@grpc/grpc-js")
                     break
                 case 'get':
                     const obj = await minioClient.getObject('test', message.data._id)
-                    var bufs = [];
-                    obj.on('data', function(d){ bufs.push(d); });
+                    var bufs = []
+                    obj.on('data', function(d){ bufs.push(d); })
                     obj.on('end', function(){
                         var buf = Buffer.concat(bufs)
                         channel.sendToQueue(
