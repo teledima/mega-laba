@@ -26,7 +26,11 @@ const App = () => {
                 formData.append('images', imageList[i])                
             }
 
-            await instance.get('/images')
+            await instance.post('/images', formData,{
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
 
         } catch (error) {
             console.log(error)
