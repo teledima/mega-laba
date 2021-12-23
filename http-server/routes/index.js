@@ -1,6 +1,5 @@
 // *** NPM ***
 import express from 'express'
-
 // *** ROUTES ***
 import imagesRouter from './images.route' 
 
