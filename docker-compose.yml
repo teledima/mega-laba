@@ -51,7 +51,7 @@ services:
       MINIO_SECRETKEY: minio124
 
   client:
-    build: ./client2
+    build: ./client
     ports:
       - 3000:3000
 
