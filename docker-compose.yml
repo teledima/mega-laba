@@ -41,7 +41,8 @@ services:
       - waitforrabbit
       - minio
     build: ./img-consumer
-    environment: 
+    environment:
+      RESIZE_URL: http://192.168.1.3:50919/Service.svc?WSDL
       RABBIT_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672
       RABBIT_QUEUE: test3
       HASHIMAGE_ADDR: hashimage:5001
