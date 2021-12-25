@@ -1,5 +1,6 @@
 // *** NPM ***
 import amqplib from 'amqplib'
+var soap = require('soap')
 // *** NODE ***
 import { serialize, deserialize } from 'v8'
 // *** OTHER ***
@@ -7,7 +8,17 @@ import minioClient from './configs/minio.config'
 import HashImageServices from './services/hashImage.service'
 const grpc = require("@grpc/grpc-js")
 
+const getFileFromStream = (stream) => 
+    new Promise((resolve) => {
+        const bufs = []
+        stream.on('data', (d) => { bufs.push(d) })
+        stream.on('end', () => {
+            resolve(Buffer.concat(bufs))
+        })    
+    })
+
 ;(async () => {
+    const resizeClient = await soap.createClientAsync(process.env.RESIZE_URL)
     const hashImage = new HashImageServices(process.env.HASHIMAGE_ADDR, grpc.credentials.createInsecure())
     const connection = await amqplib.connect(process.env.RABBIT_URL)
     console.log(`[ ${new Date()} ] Server started`)
@@ -44,18 +55,42 @@ const grpc = require("@grpc/grpc-js")
                     break
                 case 'get':
                     const obj = await minioClient.getObject('test', message.data._id)
-                    var bufs = []
-                    obj.on('data', function(d){ bufs.push(d); })
-                    obj.on('end', function(){
-                        var buf = Buffer.concat(bufs)
+                    const file = await getFileFromStream(obj)
+                    channel.sendToQueue(
+                        msg.properties.replyTo,
+                        file,
+                        {
+                          correlationId: msg.properties.correlationId,
+                        },
+                    )                    
+                    break
+                case 'resize':
+                    {
+                        const obj = await minioClient.getObject('test', message.data._id)
+                        const file = await getFileFromStream(obj)
+                        const imgBase64 = await resizeClient.ResizeImageAsync({
+                            imageArr: file.toString('base64'),
+                            new_width: message.data.new_width,
+                            new_height: message.data.new_height,
+                        })
+                        const hash = await new Promise((resolve, reject) => {
+                            hashImage.GetHash(imgBase64, (error, data) => {
+                                if(error) reject(error)
+                                resolve(data.hash)
+                            })
+                        })
+                        await minioClient.putObject('test', hash, Buffer.from(imgBase64, 'base64'), { 'Content-type': 'image/png' })
+                        const response = {
+                            hash: hash,
+                        }
                         channel.sendToQueue(
                             msg.properties.replyTo,
-                            buf,
+                            serialize(response),
                             {
-                              correlationId: msg.properties.correlationId,
+                            correlationId: msg.properties.correlationId,
                             },
                         )
-                    })                    
+                    }
                     break
             }
 
