@@ -17,6 +17,32 @@ const App = () => {
     const [status, setStatus] = useState("");
     const [photoInfo, setPhotoInfo] = useState()
     const ws = useRef(null);
+	
+	function sendMessage(socket, msg){
+		// Wait until the state of the socket is not ready and send the message when it is...
+		waitForSocketConnection(socket, function(){
+			console.log("message sent!!!");
+			socket.send(msg);
+		});
+	}
+
+	// Make the function wait until the connection is made...
+	function waitForSocketConnection(socket, callback){
+		setTimeout(
+			function () {
+				if (socket.readyState === 1) {
+					console.log("Connection is made")
+					if (callback != null){
+						callback();
+					}
+				} else {
+					console.log("wait for connection...")
+					waitForSocketConnection(socket, callback);
+				}
+
+			}, 5); // wait 5 milisecond for the connection...
+	}
+
 
 
     const onSubmitHandler = async (data) => {
@@ -41,8 +67,8 @@ const App = () => {
 
     const webSocket = useCallback(() => {
         if (!isPaused) {
-            ws.current = new WebSocket("ws://localhost:4000"); // создаем ws соединение
-            ws.current.onopen = () => setStatus("Соединение открыто");	// callback на ивент открытия соединения
+            ws.current = new WebSocket("ws://127.0.0.1:4001"); // создаем ws соединение
+            //ws.current.onopen = () => setStatus("Соединение открыто");	// callback на ивент открытия соединения
             ws.current.onclose = () => setStatus("Соединение закрыто"); // callback на ивент закрытия соединения
 			
             gettingData();
@@ -63,18 +89,20 @@ const App = () => {
     }, [isPaused]);
 
     const sendPhotoInfo = async() => {
+		console.log(photoInfo)
 		if (photoInfo)
-			ws.current.onopen = () => ws.current.send(JSON.stringify(photoInfo));	// callback на ивент открытия соединения
+			sendMessage(ws.current, JSON.stringify(photoInfo))
+			//ws.current.send(JSON.stringify(photoInfo));	// callback на ивент открытия соединения
+		return true;
     }
 
     const handeClickPhoto = (e) => {
         setDialogOpen(true)
-        setPhotoId(e.target.id)
+        setPhotoId(e.currentTarget.id)
     }
 
-    useEffect(()=>{
-        webSocket()
-    },[])
+
+
 
     useEffect(()=>{
         sendPhotoInfo()

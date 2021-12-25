@@ -17,9 +17,9 @@ class ImageQueue:
         self.response = None
         self.corr_id = None
 
-        credential = pika.PlainCredentials(username='admin', password='admin')
+        credential = pika.PlainCredentials(username='rabbitmq', password='rabbitmq')
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost', port=5432, virtual_host='/', credentials=credential)
+            pika.ConnectionParameters(host='localhost', port=5672, virtual_host='/', credentials=credential,ssl_options=None)
         )
 
         self.channel = self.connection.channel()
@@ -83,27 +83,21 @@ def get_all_objects():
     return object_names
 
 
-def on_open(websock):
-    print('open')
-    with minio_client.listen_bucket_notification(bucket_name='test', events=['s3:ObjectCreated:*', 's3:ObjectRemoved:*']) as event_listener:
-        for event in event_listener:
-            print(event)
-
-    get_all_objects()
-
-
 async def echo(websocket):
     if websocket.open:
         list_names = get_all_objects()
         response = await websocket.send(json.dumps(list_names))
     async for message in websocket:
-        print(message)
-        await websocket.send(message)
+        messageObj = json.loads(message)
+        if messageObj["id"]:
+            img_queue = ImageQueue()
+            img_queue.get_image(messageObj["id"])
+            new_image = get_new_image(img_queue.response, messageObj["width"], messageObj["height"])
+            img_queue.upload_image(new_image)
 
 
-async def main():
-    async with websockets.serve(echo, "localhost", 4000):
-        await asyncio.Future()  # run forever
+asyncio.get_event_loop().run_until_complete(
+    websockets.serve(echo, '127.0.0.1', 4001))
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.get_event_loop().run_forever()

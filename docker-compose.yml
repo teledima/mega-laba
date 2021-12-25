@@ -32,7 +32,7 @@ services:
     command: rabbitmq:5672
 
   hashimage:
-    build: ./grpc_server
+    build: ./GrpcHash
     ports: 
       - 5001:5001
 
@@ -63,3 +63,8 @@ services:
       PORT: 8000
       RABBIT_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672
       QUEUE: test3
+      
+  image_server:
+    build: ./ImageServer
+    ports:
+      - 4001:4001

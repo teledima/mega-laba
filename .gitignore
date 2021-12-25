@@ -1,8 +1,13 @@
-### ImageServer
+.idea
+
+### Docker Volumes ###
+/docker
+
+### ImageServer ###
 /ImageServer/.idea
 /ImageServer/__pycache__
 
-### GrpcHash
+### GrpcHash ###
 /GrpcHash/__pycache__
 /GrpcHash/.idea
 

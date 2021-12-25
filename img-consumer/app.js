@@ -22,7 +22,7 @@ const grpc = require("@grpc/grpc-js")
                 case 'upload':
                     {
                         const hash = await new Promise((resolve, reject) => {
-                            hashImage.GetHash(message.data.buffer, (error, data) => {
+                            hashImage.GetHash(message.data.buffer.toString('base64'), (error, data) => {
                                 if(error) reject(error)
                                 resolve(data.hash)
                             })

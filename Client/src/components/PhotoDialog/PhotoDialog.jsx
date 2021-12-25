@@ -31,14 +31,16 @@ const PhotoDialog = (props) => {
 
     const getPhoto = async() => {
         try {
-            const response = await instance.get(`/image${photoId}`)
+			if (photoId) {
+				const response = await instance.get(`/image/${photoId}`)
+			}
         } catch (error) {
             console.log(error)
         }
     }
 
     const onSubmitHandler = (data) => {
-        // data.id = id
+        data.id = photoId
         setPhotoInfo(data)
         // console.log(data)
         // getBiteSize()
