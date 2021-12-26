@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0fhashimage.proto\"\x1d\n\x0cImageRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\"\x15\n\x05Reply\x12\x0c\n\x04hash\x18\x01 \x01(\t2-\n\tHashImage\x12 \n\x07GetHash\x12\r.ImageRequest\x1a\x06.Replyb\x06proto3'
+  serialized_pb=b'\n\x0fhashimage.proto\"\x1d\n\x0cImageRequest\x12\r\n\x05image\x18\x01 \x01(\t\"\x15\n\x05Reply\x12\x0c\n\x04hash\x18\x01 \x01(\t2-\n\tHashImage\x12 \n\x07GetHash\x12\r.ImageRequest\x1a\x06.Replyb\x06proto3'
 )
 
 
@@ -35,8 +35,8 @@ _IMAGEREQUEST = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='image', full_name='ImageRequest.image', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),

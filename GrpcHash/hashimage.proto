@@ -5,7 +5,7 @@ service HashImage {
 }
 
 message ImageRequest {
-  bytes image=1;
+  string image=1;
 }
 
 message Reply {

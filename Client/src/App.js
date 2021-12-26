@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper';
+import { saveAs } from 'file-saver'
 
 // *** OTHER ***
 import instance from './instance'
@@ -12,7 +13,7 @@ const App = () => {
     const { register, handleSubmit } = useForm()
     const [photoList, setPhotoList] = useState()
     const [isPaused, setIsPaused] = useState(false);
-    const [isDialogOpen, setDialogOpen] = useState(true)
+    const [isDialogOpen, setDialogOpen] = useState(false)
     const [photoId, setPhotoId] = useState()
     const [status, setStatus] = useState("");
     const [photoInfo, setPhotoInfo] = useState()
@@ -67,7 +68,7 @@ const App = () => {
 
     const webSocket = useCallback(() => {
         if (!isPaused) {
-            ws.current = new WebSocket("ws://127.0.0.1:4001"); // создаем ws соединение
+            ws.current = new WebSocket("ws://127.0.0.1:4002"); // создаем ws соединение
             //ws.current.onopen = () => setStatus("Соединение открыто");	// callback на ивент открытия соединения
             ws.current.onclose = () => setStatus("Соединение закрыто"); // callback на ивент закрытия соединения
 			
@@ -90,9 +91,16 @@ const App = () => {
 
     const sendPhotoInfo = async() => {
 		console.log(photoInfo)
-		if (photoInfo)
+		if (photoInfo) {
 			sendMessage(ws.current, JSON.stringify(photoInfo))
-			//ws.current.send(JSON.stringify(photoInfo));	// callback на ивент открытия соединения
+            ws.current.send(JSON.stringify(photoInfo));	// callback на ивент открытия соединения
+
+            ws.current.onmessage = e => {
+                console.log('Get resized image: ', e)
+                saveAs(`data:image/png;base64,${JSON.parse(e.data).resizeResult}`)
+                
+            }
+        }
 		return true;
     }
 
@@ -102,11 +110,13 @@ const App = () => {
     }
 
 
-
+    useEffect(() => {
+        webSocket()
+    },[])
 
     useEffect(()=>{
         sendPhotoInfo()
-    },[photoInfo])
+    },[photoInfo, setPhotoInfo])
     
     return (
         <div className='main'>

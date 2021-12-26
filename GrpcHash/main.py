@@ -26,7 +26,8 @@ class HashImage(hashimage_pb2_grpc.HashImageServicer):
     async def GetHash(self,
                       request: hashimage_pb2.ImageRequest,
                       context: grpc.aio.ServicerContext) -> hashimage_pb2.Reply:
-        cipher = hashlib.sha512(request.image)
+        print(request.image)
+        cipher = hashlib.sha512(bytes(request.image, encoding='utf-8'))
         return hashimage_pb2.Reply(hash=cipher.hexdigest())
 
 
