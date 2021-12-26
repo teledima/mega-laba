@@ -10,16 +10,19 @@ namespace WcfService
     // NOTE: In order to launch WCF Test Client for testing this service, please select Service1.svc or Service1.svc.cs at the Solution Explorer and start debugging.
     public class Service : IService
     {
-        public string ResizeImage(string decoded_image, int new_width, int new_height)
+        public string ResizeImage(string imageArr, int width, int height)
         {
-            var arr = Convert.FromBase64String(decoded_image);
-            var image = new Bitmap(new MemoryStream(arr));
-            var destRect = new Rectangle(0, 0, new_width, new_height);
-            var destImage = new Bitmap(new_width, new_height);
+            var arr = Convert.FromBase64String(imageArr);
+            var inputStream = new MemoryStream(arr);
+
+            var image = Bitmap.FromStream(inputStream);
+            inputStream.Close();
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-            using (var graphics = Graphics.FromImage(image))
+            using (var graphics = Graphics.FromImage(destImage))
             {
                 graphics.CompositingMode = CompositingMode.SourceCopy;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -34,10 +37,10 @@ namespace WcfService
                 }
             }
 
-            var memoryStream = new MemoryStream();
-            destImage.Save(memoryStream, ImageFormat.Jpeg);
+            var outputStream = new MemoryStream();
+            destImage.Save(outputStream, ImageFormat.Jpeg);
 
-            return Convert.ToBase64String(memoryStream.ToArray());
+            return Convert.ToBase64String(outputStream.ToArray());
         }
     }
 }
