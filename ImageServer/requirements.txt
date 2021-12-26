@@ -1,0 +1,4 @@
+websockets
+pika
+suds
+minio

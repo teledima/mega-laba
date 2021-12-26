@@ -29,15 +29,13 @@ const PhotoDialog = (props) => {
             const imageBuffer = Buffer.from(response.data, 'binary').toString('base64')
             // const objPhoto = photo
             setPhoto(imageBuffer)
+
         } catch (error) {
             console.log(error)
         }
     }
 
-    
-
-    const onSubmitHandler = async (data) => {
-        console.log(data)
+    const onSubmitHandler = (data) => {
         data.id = photoId
         setPhotoInfo(data)
         // saveAs( img );

@@ -1,6 +1,4 @@
 ﻿using System.ServiceModel;
-using System.Drawing;
-using System.IO;
 
 namespace WcfService
 {
@@ -16,6 +14,6 @@ namespace WcfService
         /// <param name="height">The height to resize to.</param>
         /// <returns>The resized image.</returns>
         [OperationContract]
-        Stream ResizeImage(byte[] imageArr, int new_width, int new_height);
+        string ResizeImage(string imageArr, int new_width, int new_height);
     }
 }
