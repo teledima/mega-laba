@@ -12,7 +12,7 @@ const App = () => {
     const { register, handleSubmit } = useForm()
     const [photoList, setPhotoList] = useState()
     const [isPaused, setIsPaused] = useState(false);
-    const [isDialogOpen, setDialogOpen] = useState(false)
+    const [isDialogOpen, setDialogOpen] = useState(true)
     const [photoId, setPhotoId] = useState()
     const [status, setStatus] = useState("");
     const [photoInfo, setPhotoInfo] = useState()
