@@ -38,7 +38,7 @@ async def serve() -> None:
     handleimage_pb2_grpc.add_HandleImageServicer_to_server(HandleImage(), server)
 
     # add secure port
-    listen_addr = f'[::]:{os.environ.get('PORT')}'
+    listen_addr = f'[::]:{os.environ.get("PORT")}'
     server.add_insecure_port(listen_addr)
     logging.info("Starting server on %s", listen_addr)
     await server.start()

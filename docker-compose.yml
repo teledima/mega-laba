@@ -28,7 +28,7 @@ services:
   handleimage:
     build: ./GrpcHandleImage
     environment:
-      - PORT: 5001
+      PORT: 5001
     ports: 
       - 5001:5001
 
