@@ -11,42 +11,19 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 
 
-const PhotoDialog = (props) => {    
-    const { isDialogOpen, setDialogOpen, setPhotoInfo, photoId} = props
+const PhotoDialog = ({props}) => {    
+    const {isDialogOpen, setDialogOpen, setPhotoInfo, photoId} = props
     console.log(photoId)
     const { register, handleSubmit, formState: { errors } } = useForm()
-    const [photo, setPhoto] = useState()
 
-
-    const getPhoto = async() => {
-        try {
-            //const imageBuffer = Buffer.from(response.data, 'binary').toString('base64')
-            // const objPhoto = photo
-            //setPhoto(response.data)
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const onSubmitHandler = (data) => {
+    const onSubmitHandler = async(data) => {
         data._id = photoId
         setPhotoInfo(data)
-        //saveAs( img );
-        //console.log(data)
-        //getBiteSize()
     }
 
     const handleClose = () => {
         setDialogOpen(false);
     };
-
-    useEffect(()=> {
-        if(photoId){
-            getPhoto()
-        }
-    },[photoId])
-
 
     return(
         <Dialog
@@ -56,7 +33,7 @@ const PhotoDialog = (props) => {
             open={isDialogOpen}
         >
             <DialogContent className={styles.dialog} >
-                <img alt="image" src={`http://localhost:8000/images/${photoId}`} />
+                <img alt="image" src={`http://192.168.1.44:8000/images/${photoId}`} />
                 
                 <form className={styles.form} onSubmit={handleSubmit(onSubmitHandler)}>
                     <div className={styles.inputs}>

@@ -19,7 +19,7 @@ const App = () => {
     const [photoInfo, setPhotoInfo] = useState()
     const ws = useRef(null);
 	
-	function sendMessage(socket, msg){
+	function sendMessage(socket, msg) {
 		// Wait until the state of the socket is not ready and send the message when it is...
 		waitForSocketConnection(socket, function(){
 			console.log("message sent!!!");
@@ -54,13 +54,11 @@ const App = () => {
             for (let i = 0; i < imageList.length; i += 1) {
                 formData.append('images', imageList[i])                
             }
-
             await instance.post('/images', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             })
-
         } catch (error) {
             console.log(error)
         }
@@ -68,9 +66,26 @@ const App = () => {
 
     const webSocket = useCallback(() => {
         if (!isPaused) {
-            ws.current = new WebSocket("ws://127.0.0.1:4002"); // создаем ws соединение
+            ws.current = new WebSocket("ws://192.168.1.44:4002"); // создаем ws соединение
             //ws.current.onopen = () => setStatus("Соединение открыто");	// callback на ивент открытия соединения
             ws.current.onclose = () => setStatus("Соединение закрыто"); // callback на ивент закрытия соединения
+
+            
+            ws.current.onmessage = e => {
+                const data = JSON.parse(e.data)
+                console.log(data)
+                if (data.type === 'all_objects')
+                {
+                    setPhotoList(data.list)
+                }
+                else if (data.type === 'new_image')
+                {                   
+                    setPhotoList(data.list)
+                }
+                else if (data.type === 'resize') {
+                    saveAs(`data:image/png;base64,${data.resizeResult}`)
+                }
+            }
 			
             gettingData();
         }
@@ -79,14 +94,6 @@ const App = () => {
 
     const gettingData = useCallback(() => {
         if (!ws.current) return;
-
-        ws.current.onmessage = e => {                //подписка на получение данных по вебсокету
-            console.log(e.data)
-
-			if (isPaused) return;
-            const message = JSON.parse(e.data);
-            setPhotoList(message);
-        };
     }, [isPaused]);
 
     const sendPhotoInfo = async() => {
@@ -94,17 +101,12 @@ const App = () => {
 		if (photoInfo) {
 			sendMessage(ws.current, JSON.stringify(photoInfo))
             ws.current.send(JSON.stringify(photoInfo));	// callback на ивент открытия соединения
-
-            ws.current.onmessage = e => {
-                console.log('Get resized image: ', e)
-                saveAs(`data:image/png;base64,${JSON.parse(e.data).resizeResult}`)
-                
-            }
         }
 		return true;
     }
 
     const handeClickPhoto = (e) => {
+        console.log('handle click: ', e.currentTarget)
         setDialogOpen(true)
         setPhotoId(e.currentTarget.id)
     }
@@ -114,9 +116,9 @@ const App = () => {
         webSocket()
     },[])
 
-    useEffect(()=>{
+    useEffect(() => {
         sendPhotoInfo()
-    },[photoInfo, setPhotoInfo])
+    }, [photoInfo])
     
     return (
         <div className='main'>
@@ -139,10 +141,12 @@ const App = () => {
             </form>
             <div className='photoList'>
                 <h2>{status}</h2>
+                
                 {
-					photoList?.map((item)=>{
+                    
+					photoList?.map((item, i)=>{
 						return (
-                            <Paper id={`${item.name}`} elevation={3} onClick={e=>handeClickPhoto(e)}> 
+                            <Paper key={item.name} id={item.name} elevation={3} onClick={e=>handeClickPhoto(e)}> 
 								<h2>{item.name}</h2>
                             </Paper>
 						)
@@ -150,11 +154,7 @@ const App = () => {
 				}
             </div> 
 
-            <PhotoDialog
-                isDialogOpen={isDialogOpen}
-                setDialogOpen={setDialogOpen}
-                setPhotoInfo={setPhotoInfo}
-                photoId={photoId}
+            <PhotoDialog props={{isDialogOpen, setDialogOpen, setPhotoInfo, photoId}}
             />
         </div>
     )

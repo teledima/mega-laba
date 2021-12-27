@@ -28,8 +28,17 @@ const getFileFromStream = (stream) =>
       listObjects = await getFileFromStream(stream)
 
       console.log(listObjects)
-      wsClient.send(JSON.stringify(listObjects))
-      
+      wsClient.send(JSON.stringify({type: 'all_objects', list: listObjects}))
+
+
+      var listener = minioClient.listenBucketNotification(process.env.MINIO_BUCKET, '', '', ['s3:ObjectCreated:*', 's3:ObjectRemoved:*'])
+
+      listener.on('notification', async(record) => {
+        const stream = minioClient.listObjects('test', '', true)
+        listObjects = await getFileFromStream(stream)
+
+        wsClient.send(JSON.stringify({type: 'new_image', list: listObjects}))
+      })
 
       async function onMessage(data) {
         console.log('Get message from client: ', JSON.parse(data.toString()))
@@ -40,7 +49,7 @@ const getFileFromStream = (stream) =>
 
         console.log('Get response: ', responseJson.length)
         // console.log(`[ ${new Date()} ] Message received: ${JSON.stringify(response)}`)
-        wsClient.send(JSON.stringify({resizeResult: responseJson}))
+        wsClient.send(JSON.stringify({type: 'resize', resizeResult: responseJson}))
       }
 
       /*

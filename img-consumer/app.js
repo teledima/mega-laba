@@ -12,7 +12,9 @@ const grpc = require("@grpc/grpc-js")
 const getFileFromStream = (stream) => 
     new Promise((resolve) => {
         const bufs = []
-        stream.on('data', (d) => { bufs.push(d) })
+        stream.on('data', (d) => { 
+            bufs.push(d) 
+        })
         stream.on('end', () => {
             resolve(Buffer.concat(bufs))
         })    

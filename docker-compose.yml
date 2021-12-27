@@ -53,5 +53,6 @@ services:
       MINIO_PORT: 9000
       MINIO_ACCESSKEY: minio
       MINIO_SECRETKEY: minio124
+      MINIO_BUCKET: test
     ports:
       - 4002:4002
