@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wsserver
+  namespace: chaos-app
+  labels:
+    app: wsserver
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wsserver
+  template:
+    metadata:
+      labels:
+        app: wsserver
+    spec:
+      containers:
+        - name: wsserver
+          image: docker.io/teledima/mega-laba-ws-server:v1
+          env:
+            - name: PORT
+              value: "4002"
+            - name: RABBIT_URL
+              value: "amqp://rabbitmq:rabbitmq@rabbitmq:5672"
+            - name: QUEUE
+              value: "test3"
+            - name: MINIO_ENDPOINT
+              value: "minio"
+            - name: MINIO_PORT
+              value: "9000"
+            - name: MINIO_ACCESSKEY
+              value: "minio"   
+            - name: MINIO_SECRETKEY
+              value: "minio124"  
+            - name: MINIO_BUCKET
+              value: "test"  
+          ports: 
+            - containerPort: 4002 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wsserver
+  namespace: chaos-app
+spec:
+  selector:
+    app: wsserver
+  ports:
+    - protocol: TCP
+      port: 4002
+      targetPort: 4002

@@ -26,19 +26,19 @@ services:
       - 15672:15672
 
   handleimage:
-    build: ./GrpcHandleImage
+    image: docker.io/teledima/mega-laba-grpc-handle-image:v1
     environment:
       PORT: 5001
     ports: 
       - 5001:5001
 
   client:
-    build: ./client
+    image: docker.io/teledima/mega-laba-client:v1
     ports:
       - 3000:3000
 
   httpserver:
-    build: ./http-server
+    image: docker.io/teledima/mega-laba-http-server:v1
     ports:
       - 8000:8000
     environment: 
@@ -47,7 +47,7 @@ services:
       QUEUE: test3
   
   ws_server:
-    build: ./ws-server
+    image: docker.io/teledima/mega-laba-ws-server:v1
     environment:
       PORT: 4002
       RABBIT_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672
@@ -62,7 +62,7 @@ services:
 
   img_consumer:
     restart: always
-    build: ./img-consumer
+    image: docker.io/teledima/mega-laba-img-consumer:v1
     environment:
       RABBIT_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672
       RABBIT_QUEUE: test3
