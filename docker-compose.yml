@@ -25,8 +25,10 @@ services:
       - 5672:5672
       - 15672:15672
 
-  hashimage:
-    build: ./GrpcHash
+  handleimage:
+    build: ./GrpcHandleImage
+    environment:
+      - PORT: 5001
     ports: 
       - 5001:5001
 
@@ -43,6 +45,7 @@ services:
       PORT: 8000
       RABBIT_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672
       QUEUE: test3
+  
   ws_server:
     build: ./ws-server
     environment:
@@ -56,3 +59,15 @@ services:
       MINIO_BUCKET: test
     ports:
       - 4002:4002
+
+  img_consumer:
+    restart: always
+    build: ./img-consumer
+    environment:
+      RABBIT_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672
+      RABBIT_QUEUE: test3
+      HASHIMAGE_ADDR: handleimage:5001
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ACCESSKEY: minio
+      MINIO_SECRETKEY: minio124

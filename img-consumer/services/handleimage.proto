@@ -1,0 +1,20 @@
+syntax="proto3";
+
+service HandleImage {
+  rpc GetHash(Image) returns (Hash);
+  rpc Resize(ResizeRequest) returns (Image);
+}
+
+message ResizeRequest {
+  string image=1;
+  int32 new_width=2;
+  int32 new_height=3;
+}
+
+message Image {
+  string image=1;
+}
+
+message Hash {
+  string hash=1;
+}

@@ -7,8 +7,6 @@ import { Button, TextField, } from '@material-ui/core'
 
 // *** OTHER ***
 import styles from './PhotoDialog.module.css'
-import { useEffect } from 'react';
-import { useState } from 'react';
 
 
 const PhotoDialog = ({props}) => {    

@@ -45,32 +45,9 @@ const getFileFromStream = (stream) =>
         const message = {type: 'resize', data: JSON.parse(data.toString())}
         const rabbitChannel = await createClient(process.env.RABBIT_URL)
         const response = await sendRPCMessage(rabbitChannel, serialize(message), process.env.QUEUE)
-        const responseJson = deserialize(response)[0].ResizeImageResult
-
-        console.log('Get response: ', responseJson.length)
+        
         // console.log(`[ ${new Date()} ] Message received: ${JSON.stringify(response)}`)
-        wsClient.send(JSON.stringify({type: 'resize', resizeResult: responseJson}))
+        wsClient.send(JSON.stringify({type: 'resize', resizeResult: deserialize(response)}))
       }
-
-      /*
-      console.log('Новый пользователь');
-
-      // отправка приветственного сообщения клиенту
-      const messange = { type: 'resize', data: { _id: 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e', new_width: 100, new_height: 100 } }
-      console.log(`[ ${new Date()} ] Message sent: ${JSON.stringify(messange)}`)
-      const serializeMessange = serialize(messange)
-      const respone = await sendRPCMessage(rabbitChannel, serializeMessange, process.env.QUEUE)
-      const responeJson = deserialize(respone)
-      console.log(`[ ${new Date()} ] Message received: ${JSON.stringify(responeJson)}`)
-      wsClient.send(JSON.stringify(responeJson))
-      
-      wsClient.on('message', function(message) {
-        // обработчик сообщений от клиента
-      })
-      wsClient.on('close', function() {
-        // отправка уведомления в консоль
-        console.log('Пользователь отключился');
-      })
-      */
   }
 })()

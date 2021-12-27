@@ -5,7 +5,7 @@ var soap = require('soap')
 import { serialize, deserialize } from 'v8'
 // *** OTHER ***
 import minioClient from './configs/minio.config'
-import HashImageServices from './services/hashImage.service'
+import handleImageServices from './services/handleImage.service'
 const grpc = require("@grpc/grpc-js")
 
 
@@ -21,8 +21,7 @@ const getFileFromStream = (stream) =>
     })
 
 ;(async () => {
-    const resizeClient = await soap.createClientAsync(process.env.RESIZE_URL)
-    const hashImage = new HashImageServices(process.env.HASHIMAGE_ADDR, grpc.credentials.createInsecure())
+    const handleImage = new handleImageServices(process.env.HASHIMAGE_ADDR, grpc.credentials.createInsecure())
     const connection = await amqplib.connect(process.env.RABBIT_URL)
     console.log(`[ ${new Date()} ] Server started`)
     const channel = await connection.createChannel()
@@ -37,7 +36,7 @@ const getFileFromStream = (stream) =>
                     {
                         const hash = await new Promise((resolve, reject) => {
                             console.log('base64: ', message.data.buffer.toString('base64').length)
-                            hashImage.GetHash({image: message.data.buffer.toString('base64')}, (error, data) => {
+                            handleImage.GetHash({image: message.data.buffer.toString('base64')}, (error, data) => {
                                 if(error) reject(error)
                                 resolve(data.hash)
                             })
@@ -53,7 +52,7 @@ const getFileFromStream = (stream) =>
                             msg.properties.replyTo,
                             serialize(response),
                             {
-                            correlationId: msg.properties.correlationId,
+                                correlationId: msg.properties.correlationId,
                             },
                         )
                     }
@@ -72,19 +71,24 @@ const getFileFromStream = (stream) =>
                 case 'resize':
                     {
                         console.log('request to resize', message.data)
+
                         const obj = await minioClient.getObject('test', message.data._id)
                         const file = await getFileFromStream(obj)
-                        const imgBase64 = await resizeClient.ResizeImageAsync({
-                            imageArr: file.toString('base64'),
-                            new_width: message.data.new_width,
-                            new_height: message.data.new_height,
+
+                        const image = await new Promise((resolve, reject) => {
+                            handleImage.Resize(
+                                { image: file.toString('base64'), new_width: message.data.new_width, new_height: message.data.new_height }, 
+                                (error, data) => {
+                                    if(error) reject(error)
+                                    resolve(data.image)
+                            })
                         })
                         
                         channel.sendToQueue(
                             msg.properties.replyTo,
-                            serialize(imgBase64),
+                            serialize(image),
                             {
-                            correlationId: msg.properties.correlationId,
+                                correlationId: msg.properties.correlationId,
                             },
                         )
                     }

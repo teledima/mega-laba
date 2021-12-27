@@ -7,9 +7,9 @@
 /ImageServer/.idea
 /ImageServer/__pycache__
 
-### GrpcHash ###
-/GrpcHash/__pycache__
-/GrpcHash/.idea
+### GrpcHandleImage ###
+/GrpcHandleImage/__pycache__
+/GrpcHandleImage/.idea
 
 ### VisualStudio ###
 

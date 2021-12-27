@@ -1,7 +1,7 @@
 const grpc = require("@grpc/grpc-js")
 const protoLoader = require("@grpc/proto-loader")
 
-const PROTO_PATH = "./services/hashimage.proto"
+const PROTO_PATH = "./services/handleimage.proto"
 
 const options = {
     keepCase: true,
@@ -13,6 +13,6 @@ const options = {
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, options)
 
-const HashImage = grpc.loadPackageDefinition(packageDefinition).HashImage
+const HandleImage = grpc.loadPackageDefinition(packageDefinition).HandleImage
 
-export default HashImage
+export default HandleImage
