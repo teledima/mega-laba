@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper';
+import { saveAs } from 'file-saver'
 
 // *** OTHER ***
 import instance from './instance'
@@ -12,13 +13,13 @@ const App = () => {
     const { register, handleSubmit } = useForm()
     const [photoList, setPhotoList] = useState()
     const [isPaused, setIsPaused] = useState(false);
-    const [isDialogOpen, setDialogOpen] = useState(true)
+    const [isDialogOpen, setDialogOpen] = useState(false)
     const [photoId, setPhotoId] = useState()
     const [status, setStatus] = useState("");
     const [photoInfo, setPhotoInfo] = useState()
     const ws = useRef(null);
 	
-	function sendMessage(socket, msg){
+	function sendMessage(socket, msg) {
 		// Wait until the state of the socket is not ready and send the message when it is...
 		waitForSocketConnection(socket, function(){
 			console.log("message sent!!!");
@@ -53,13 +54,11 @@ const App = () => {
             for (let i = 0; i < imageList.length; i += 1) {
                 formData.append('images', imageList[i])                
             }
-
             await instance.post('/images', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             })
-
         } catch (error) {
             console.log(error)
         }
@@ -70,6 +69,23 @@ const App = () => {
             ws.current = new WebSocket(process.env.WS_ADDRESS); // создаем ws соединение
             //ws.current.onopen = () => setStatus("Соединение открыто");	// callback на ивент открытия соединения
             ws.current.onclose = () => setStatus("Соединение закрыто"); // callback на ивент закрытия соединения
+
+            
+            ws.current.onmessage = e => {
+                const data = JSON.parse(e.data)
+                console.log(data)
+                if (data.type === 'all_objects')
+                {
+                    setPhotoList(data.list)
+                }
+                else if (data.type === 'new_image')
+                {                   
+                    setPhotoList(data.list)
+                }
+                else if (data.type === 'resize') {
+                    saveAs(`data:image/png;base64,${data.resizeResult}`)
+                }
+            }
 			
             gettingData();
         }
@@ -78,35 +94,31 @@ const App = () => {
 
     const gettingData = useCallback(() => {
         if (!ws.current) return;
-
-        ws.current.onmessage = e => {                //подписка на получение данных по вебсокету
-            console.log(e.data)
-
-			if (isPaused) return;
-            const message = JSON.parse(e.data);
-            setPhotoList(message);
-        };
     }, [isPaused]);
 
     const sendPhotoInfo = async() => {
 		console.log(photoInfo)
-		if (photoInfo)
+		if (photoInfo) {
 			sendMessage(ws.current, JSON.stringify(photoInfo))
-			//ws.current.send(JSON.stringify(photoInfo));	// callback на ивент открытия соединения
+            ws.current.send(JSON.stringify(photoInfo));	// callback на ивент открытия соединения
+        }
 		return true;
     }
 
     const handeClickPhoto = (e) => {
+        console.log('handle click: ', e.currentTarget)
         setDialogOpen(true)
         setPhotoId(e.currentTarget.id)
     }
 
 
+    useEffect(() => {
+        webSocket()
+    },[])
 
-
-    useEffect(()=>{
+    useEffect(() => {
         sendPhotoInfo()
-    },[photoInfo])
+    }, [photoInfo])
     
     return (
         <div className='main'>
@@ -129,10 +141,12 @@ const App = () => {
             </form>
             <div className='photoList'>
                 <h2>{status}</h2>
+                
                 {
-					photoList?.map((item)=>{
+                    
+					photoList?.map((item, i)=>{
 						return (
-                            <Paper id={`${item.name}`} elevation={3} onClick={e=>handeClickPhoto(e)}> 
+                            <Paper key={item.name} id={item.name} elevation={3} onClick={e=>handeClickPhoto(e)}> 
 								<h2>{item.name}</h2>
                             </Paper>
 						)
@@ -140,11 +154,7 @@ const App = () => {
 				}
             </div> 
 
-            <PhotoDialog
-                isDialogOpen={isDialogOpen}
-                setDialogOpen={setDialogOpen}
-                setPhotoInfo={setPhotoInfo}
-                photoId={photoId}
+            <PhotoDialog props={{isDialogOpen, setDialogOpen, setPhotoInfo, photoId}}
             />
         </div>
     )

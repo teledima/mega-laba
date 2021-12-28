@@ -1,0 +1,3 @@
+grpcio
+grpcio_tools
+Pillow

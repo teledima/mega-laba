@@ -4,55 +4,24 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent';
 import { useForm } from 'react-hook-form'
 import { Button, TextField, } from '@material-ui/core'
-import { saveAs } from "file-saver";
 
 // *** OTHER ***
 import styles from './PhotoDialog.module.css'
-import instance from '../../instance'
-import { useEffect } from 'react';
-import { useState } from 'react';
 
 
-
-
-const PhotoDialog = (props) => {    
-    const { isDialogOpen, setDialogOpen, setPhotoInfo, photoId} = props
+const PhotoDialog = ({props}) => {    
+    const {isDialogOpen, setDialogOpen, setPhotoInfo, photoId} = props
+    console.log(photoId)
     const { register, handleSubmit, formState: { errors } } = useForm()
-    const [photo, setPhoto] = useState()
 
-
-    const getPhoto = async() => {
-        try {
-            const response = await instance.get(`/image/${photoId}`, {
-                responseType: 'arraybuffer',
-            })
-            const imageBuffer = Buffer.from(response.data, 'binary').toString('base64')
-            // const objPhoto = photo
-            setPhoto(imageBuffer)
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const onSubmitHandler = (data) => {
-        data.id = photoId
+    const onSubmitHandler = async(data) => {
+        data._id = photoId
         setPhotoInfo(data)
-        // saveAs( img );
-        // console.log(data)
-        // getBiteSize()
     }
 
     const handleClose = () => {
         setDialogOpen(false);
     };
-
-    useEffect(()=> {
-        if(photoId){
-            getPhoto()
-        }
-    },[])
-
 
     return(
         <Dialog
@@ -61,8 +30,8 @@ const PhotoDialog = (props) => {
             maxWidth='xl'
             open={isDialogOpen}
         >
-            <DialogContent className={styles.dialog}>
-                <img alt='img' className={styles.img} src={`data:image/jpeg;base64,${photo}`}/>
+            <DialogContent className={styles.dialog} >
+                <img alt="image" src={`http://192.168.1.44:8000/images/${photoId}`} />
                 
                 <form className={styles.form} onSubmit={handleSubmit(onSubmitHandler)}>
                     <div className={styles.inputs}>

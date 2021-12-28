@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: D:\Application\Kompose\kompose.exe convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: img-consumer
+  name: img-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: img-consumer
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: D:\Application\Kompose\kompose.exe convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: img-consumer
+    spec:
+      containers:
+        - env:
+            - name: HASHIMAGE_ADDR
+              value: handleimage:5001
+            - name: MINIO_ACCESSKEY
+              value: minio
+            - name: MINIO_ENDPOINT
+              value: minio
+            - name: MINIO_PORT
+              value: "9000"
+            - name: MINIO_SECRETKEY
+              value: minio124
+            - name: RABBIT_QUEUE
+              value: test3
+            - name: RABBIT_URL
+              value: amqp://rabbitmq:rabbitmq@rabbitmq:5672
+          image: docker.io/teledima/mega-laba-img-consumer:v1
+          name: img-consumer
+          resources: {}
+      restartPolicy: Always
+status: {}

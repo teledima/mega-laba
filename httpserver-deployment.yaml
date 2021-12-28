@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: D:\Application\Kompose\kompose.exe convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: httpserver
+  name: httpserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: httpserver
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: D:\Application\Kompose\kompose.exe convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: httpserver
+    spec:
+      containers:
+        - env:
+            - name: PORT
+              value: "8000"
+            - name: QUEUE
+              value: test3
+            - name: RABBIT_URL
+              value: amqp://rabbitmq:rabbitmq@rabbitmq:5672
+          image: docker.io/teledima/mega-laba-http-server:v1
+          name: httpserver
+          ports:
+            - containerPort: 8000
+          resources: {}
+      restartPolicy: Always
+status: {}
