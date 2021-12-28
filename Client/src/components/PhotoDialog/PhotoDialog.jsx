@@ -31,7 +31,7 @@ const PhotoDialog = ({props}) => {
             open={isDialogOpen}
         >
             <DialogContent className={styles.dialog} >
-                <img alt="image" src={`http://192.168.1.44:8000/images/${photoId}`} />
+                <img alt="image" src={`${process.env.REACT_APP_HTTPSERVER}/images/${photoId}`} />
                 
                 <form className={styles.form} onSubmit={handleSubmit(onSubmitHandler)}>
                     <div className={styles.inputs}>
