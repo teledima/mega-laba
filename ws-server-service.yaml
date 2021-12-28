@@ -6,14 +6,15 @@ metadata:
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: ws-server
+    app: ws-server
   name: ws-server
+  namespace: chaos-app
 spec:
   ports:
     - protocol: TCP
       port: 4002
       targetPort: 4002
   selector:
-    io.kompose.service: ws-server
+    app: ws-server
 status:
   loadBalancer: {}

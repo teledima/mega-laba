@@ -3,8 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   creationTimestamp: null
   labels:
-    io.kompose.service: minio-claim1
+    app: minio-claim1
   name: minio-claim1
+  namespace: chaos-app
 spec:
   accessModes:
     - ReadWriteOnce

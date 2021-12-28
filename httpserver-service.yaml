@@ -6,14 +6,15 @@ metadata:
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: httpserver
+    app: httpserver
   name: httpserver
+  namespace: chaos-app
 spec:
   ports:
     - protocol: TCP
       port: 8000
       targetPort: 8000
   selector:
-    io.kompose.service: httpserver
+    app: httpserver
 status:
   loadBalancer: {}
