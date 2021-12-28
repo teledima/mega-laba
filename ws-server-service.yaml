@@ -10,7 +10,7 @@ metadata:
   name: ws-server
 spec:
   ports:
-    - name: "4002"
+    - protocol: TCP
       port: 4002
       targetPort: 4002
   selector:
