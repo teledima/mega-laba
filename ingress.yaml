@@ -1,13 +1,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    nginx.ingress.kubernetes.io/app-root: /
-    nginx.ingress.kubernetes.io/use-regex: "true"
   name: ingress-mega-laba-backend
   namespace: chaos-app
 spec:
-  ingressClassName: nginx
   rules:
   - http:
       paths:
@@ -23,7 +19,7 @@ spec:
             name: httpserver
             port:
               number: 8000
-        path: /images(/|$)(.*)
+        path: /images
         pathType: Prefix
 ---
 apiVersion: networking.k8s.io/v1
