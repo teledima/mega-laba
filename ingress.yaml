@@ -29,7 +29,7 @@ metadata:
   namespace: chaos-app
 spec:
   rules:
-  - htpp:
+  - http:
       paths:
       - path: /
         pathType: Prefix
