@@ -7,10 +7,17 @@ spec:
   rules:
   - http:
       paths:
-      - path: /
-        pathType: Prefix
+      - path: /api/websocket
+        pathType: Exact
         backend:
           service:
             name: client
             port:
               number: 3000
+      - path: /images
+        pathType: Prefix
+        backend:
+          service:
+            name: httpserver
+            port:
+              number: 8000
