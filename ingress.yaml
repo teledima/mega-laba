@@ -7,13 +7,20 @@ spec:
   rules:
   - http:
       paths:
-      - path: /api/websocket
+      - path: /
         pathType: Exact
         backend:
           service:
             name: client
             port:
               number: 3000
+      - path: /api/websocket
+        pathType: Exact
+        backend:
+          service:
+            name: ws-server
+            port:
+              number: 4002
       - path: /images
         pathType: Prefix
         backend:
