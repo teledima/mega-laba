@@ -7,20 +7,30 @@ spec:
   rules:
   - http:
       paths:
-      - path: /api/websocket
-        pathType: Prefix
-        backend:
+      - backend:
           service:
             name: ws-server
             port:
               number: 4002
-      - path: /images
+        path: /api/websocket
         pathType: Prefix
-        backend:
+      - backend:
           service:
             name: httpserver
             port:
               number: 8000
+        path: /images
+        pathType: Prefix
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-mega-laba
+  namespace: chaos-app
+spec:
+  rules:
+  - htpp:
+      paths:
       - path: /
         pathType: Prefix
         backend:
