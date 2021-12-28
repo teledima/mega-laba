@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: handleimage
-          image: docker.io/teledima/mega-laba-handle-image:v1
+          image: docker.io/teledima/mega-laba-grpc-handle-image:v1
           env:
             - name: PORT
               value: "5001"
