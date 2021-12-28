@@ -42,7 +42,7 @@ spec:
             - name: RABBIT_URL
               value: amqp://rabbitmq:rabbitmq@rabbitmq:5672
           image: docker.io/teledima/mega-laba-ws-server:v1
-          name: ws_server
+          name: ws-server
           ports:
             - containerPort: 4002
           resources: {}
