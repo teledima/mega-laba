@@ -21,7 +21,7 @@ spec:
           env:
             - name: RABBIT_URL
               value: "amqp://rabbitmq:rabbitmq@rabbitmq:5672"
-            - name: QUEUE
+            - name: RABBIT_QUEUE
               value: "test3"
             - name: HASHIMAGE_ADDR
               value: "handleimage:5001"
