@@ -67,7 +67,7 @@ const App = () => {
 
     const webSocket = useCallback(() => {
         if (!isPaused) {
-            ws.current = new WebSocket("ws://127.0.0.1:4001"); // создаем ws соединение
+            ws.current = new WebSocket(process.env.WS_ADDRESS); // создаем ws соединение
             //ws.current.onopen = () => setStatus("Соединение открыто");	// callback на ивент открытия соединения
             ws.current.onclose = () => setStatus("Соединение закрыто"); // callback на ивент закрытия соединения
 			
