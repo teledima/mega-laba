@@ -26,7 +26,7 @@ spec:
       containers:
         - env:
             - name: REACT_APP_HTTPSERVER
-              value: http://34.107.234.37/images
+              value: http://34.107.234.37/
             - name: REACT_APP_WEBSOCKET
               value: ws://34.107.234.37/api/websocket
           image: docker.io/teledima/mega-laba-client:v2

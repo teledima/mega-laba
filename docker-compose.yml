@@ -36,7 +36,7 @@ services:
     image: docker.io/teledima/mega-laba-client:v2
     environment:
       REACT_APP_WEBSOCKET: ws://34.107.234.37/api/websocket
-      REACT_APP_HTTPSERVER: http://34.107.234.37/images
+      REACT_APP_HTTPSERVER: http://34.107.234.37/
     ports:
       - 3000:3000
 
