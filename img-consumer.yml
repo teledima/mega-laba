@@ -42,3 +42,7 @@ metadata:
 spec:
   selector:
     app: img-consumer
+  ports:
+    - protocol: TCP
+      port: 7000
+      targetPort: 7000
