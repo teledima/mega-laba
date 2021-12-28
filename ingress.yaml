@@ -1,26 +1,40 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-mega-laba-backend
+  name: ingress-mega-laba-ws-server
   namespace: chaos-app
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - http:
       paths:
-      - backend:
+      - path: /api/websocket
+        pathType: Prefix
+        backend:
           service:
             name: ws-server
             port:
               number: 4002
-        path: /api/websocket
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-mega-laba-httpserver
+  namespace: chaos-app
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /images
         pathType: Prefix
-      - backend:
+        backend:
           service:
             name: httpserver
             port:
               number: 8000
-        path: /images
-        pathType: Prefix
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
