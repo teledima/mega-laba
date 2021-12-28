@@ -8,7 +8,7 @@ spec:
   - http:
       paths:
       - path: /api/websocket
-        pathType: Exact
+        pathType: Prefix
         backend:
           service:
             name: ws-server
